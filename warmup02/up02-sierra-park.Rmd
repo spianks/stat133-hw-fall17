@@ -1,0 +1,79 @@
+---
+title: "hw-warmup2"
+author: "Sierra Park"
+date: "9/12/2017"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+# load the objects
+load("nba2017-salary-points.RData")
+
+# list the available objects
+ls()
+```
+
+# Quantative Variable
+I selected "points."
+```{r}
+summary(points)
+mena <- mean(points)
+mena
+sd(points)
+min(points)
+max(points)
+median(points)
+quantile(points)
+
+modes <- unique(points)
+modes[which.max(tabulate(match(points, modes)))]
+```
+```{r}
+modes <- unique(points)
+modes[which.max(tabulate(match(points, modes)))]
+```
+
+The typical values in each vector is the mode.
+The spread is from 0 to 2558.
+This graph is skewed right, and has a long right tail.
+There are many outliers that are greater than the maximum, which is 2558. 
+The mean is at 546.6, which is greater than the mode and the median. 
+
+
+This visualization is expected since most average players score within in an average range, while there are only a few exceptionally high-scoring players. 
+
+```{r}
+hist(points)
+boxplot(points)
+plot(density(points))
+```
+
+
+Qualitative variable I chose is "team"
+```{r}
+newteam <- factor(team)
+t <- table(newteam)
+total <- sum(t)
+#t[nrow(t)+1] <-  c(t/total)
+#length(c(t/total))
+barplot(t/total)
+```
+
+The qualitative variable "team", has similar relative frequencies, only a few teams having relative freuqency less than 0.03. Hence, the shape is almost uniform. 
+
+
+
+# Report my process
+
+1. It is hard to work with graphs and tables, since we have not covered them in class.
+2. The sd/mean/median functions were not covered in class, but it was doable by searching. 
+3. I still do not understand tables.
+4. The most time consuming part was creating tables and working with relative frequencies. 
+5. I worked on this by myself.
+6. No frustrating issue. 
