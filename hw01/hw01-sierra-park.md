@@ -88,7 +88,8 @@ summary(Yhat) #summary statistics of Y hat
 
 Yhat is approximation to salary using the regression line. The summary statistics is shown above.
 
-The regression equation: &gt; = \[0.00856x + 1.509\]\]
+The regression equation:
+*p**r**e**d**i**c**t**e**d**s**a**l**a**r**y* = 0.008557567(*p**o**i**n**t*)+1.509077
 
 The slope (0.00856) means that one unit increase in x-value (points) corresponds to 0.0856 unit increase in y-value (salary).
 
