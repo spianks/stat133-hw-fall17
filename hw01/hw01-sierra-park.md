@@ -91,6 +91,10 @@ Yhat is approximation to salary using the regression line. The summary statistic
 The regression equation:
 *p**r**e**d**i**c**t**e**d**s**a**l**a**r**y* = 0.008557567(*p**o**i**n**t*)+1.509077
 
+$$
+\\hat{y} = b\_0+ b\_1\*x
+$$
+
 The slope (0.00856) means that one unit increase in x-value (points) corresponds to 0.0856 unit increase in y-value (salary).
 
 The intercept means that when x-value is 0, meaning that the player does not score any points, the salary is still 1.509 (in million dollars).
