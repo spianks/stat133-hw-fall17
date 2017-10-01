@@ -25,8 +25,6 @@ str(dat)
 
 ```{r}
 setwd('/Users/spark/Documents/UCBERKELEY/2017Fall/stat133/stat133-hws-fall17/hw02/data')
-#install.packages("readr")
-#classes <- list(col_charcter(), col_character(), col_factor(), col_character(), col_double(), rep(col_integer(),19))
 library("readr")
 dat2 <- read_csv("nba2017-player-statistics.csv", col_types = cols(
   Player= col_character(),
@@ -57,8 +55,6 @@ dat2 <- read_csv("nba2017-player-statistics.csv", col_types = cols(
 
 
 
-#list(col_character(), col_character(), col_factor(), col_character(), col_double(), rep("col_integer()",19)))
-#coltypes(data) <- classes
 dat2
 ```
 
@@ -77,15 +73,6 @@ dat
 
 #4. Performance of Players 
 ```{r}
-#PTS: total points => 3*Points3_atts + 2*Points2_atts + FTM
-#REB: total rebounds => ORB + DRB
-#AST: assists
-#STL: steals
-#BLK: blocks
-#Missed FG: missed field goals => FGA - FGM
-#Missed FT: missed free throws => FTA - FTM
-#TO: turnovers
-#GP: games played 
 dat$Missed_FG = dat$FGA - dat$FGM
 dat$Missed_FT = dat$FTA - dat$FTM
 dat$PTS = 3*dat$Points3 + 2*dat$Points2 + dat$FTM
@@ -101,6 +88,10 @@ dat
 ```{R}
 summary(dat$EFT)
 ```
+```{r}
+hist(dat$EFT, col = "gray", xlab = "EFF", main = "Histogram of Efficiency (EFF)")
+```
+
 
 ```{r}
 #Display the player name, team, salary, and EFT of the top 10 players in decreasing order
@@ -127,6 +118,7 @@ cor(dat$EFT, -dat$Missed_FG),
 cor(dat$EFT, -dat$Missed_FT),
 cor(dat$EFT, -dat$TO))
 corrs <- sort(corrs, decreasing= TRUE)
+corrs
 ```
 
 ```{r}
@@ -160,7 +152,8 @@ lines(lowess(players2$EFT, players2$Salary))
 cor(players2$EFT, players2$Salary)
 ```
 
-The correlation is lower for more established players.
+The correlation is lower for more established players. This means that EFT and Salary are not really related to each other.
+However, compared to the first plot, the lowess line of the second plot seems to be a little more steeper since it is less curvy. 
 
 
 #6. Comments and Reflfections

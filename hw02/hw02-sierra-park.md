@@ -1377,8 +1377,6 @@ str(dat)
 
 ``` r
 setwd('/Users/spark/Documents/UCBERKELEY/2017Fall/stat133/stat133-hws-fall17/hw02/data')
-#install.packages("readr")
-#classes <- list(col_charcter(), col_character(), col_factor(), col_character(), col_double(), rep(col_integer(),19))
 library("readr")
 dat2 <- read_csv("nba2017-player-statistics.csv", col_types = cols(
   Player= col_character(),
@@ -1409,8 +1407,6 @@ dat2 <- read_csv("nba2017-player-statistics.csv", col_types = cols(
 
 
 
-#list(col_character(), col_character(), col_factor(), col_character(), col_double(), rep("col_integer()",19)))
-#coltypes(data) <- classes
 dat2
 ```
 
@@ -2858,15 +2854,6 @@ dat
 =========================
 
 ``` r
-#PTS: total points => 3*Points3_atts + 2*Points2_atts + FTM
-#REB: total rebounds => ORB + DRB
-#AST: assists
-#STL: steals
-#BLK: blocks
-#Missed FG: missed field goals => FGA - FGM
-#Missed FT: missed free throws => FTA - FTM
-#TO: turnovers
-#GP: games played 
 dat$Missed_FG = dat$FGA - dat$FGM
 dat$Missed_FT = dat$FTA - dat$FTM
 dat$PTS = 3*dat$Points3 + 2*dat$Points2 + dat$FTM
@@ -4655,6 +4642,12 @@ summary(dat$EFT)
     ##  -0.600   5.452   9.090  10.137  13.247  33.840
 
 ``` r
+hist(dat$EFT, col = "gray", xlab = "EFF", main = "Histogram of Efficiency (EFF)")
+```
+
+![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png)
+
+``` r
 #Display the player name, team, salary, and EFT of the top 10 players in decreasing order
 new <- dat[order(dat$EFT, decreasing = TRUE),]
 new <- new[1:10,]
@@ -4690,13 +4683,17 @@ cor(dat$EFT, -dat$Missed_FG),
 cor(dat$EFT, -dat$Missed_FT),
 cor(dat$EFT, -dat$TO))
 corrs <- sort(corrs, decreasing= TRUE)
+corrs
 ```
+
+    ## [1]  0.8588644  0.7634501  0.6957286  0.6689232  0.5679571 -0.7271456
+    ## [7] -0.7722477 -0.8003289
 
 ``` r
 barplot(corrs, names.arg = c("PTS", "REB", "STL", "AST","BLK", "Missed_FT", "Missed_FG", "TO"), yaxp = c(-1, 1, 4), col = c(rep("gray",5), rep("red",3)), main = "Correlations between Player Stats and EFF")
 ```
 
-![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-11-1.png)
+![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png)
 
 5 Efficiency and Salary
 =======================
@@ -4706,7 +4703,7 @@ plot(dat$EFT, dat$Salary,  col = "blue", xlab = "Efficiency", ylab = "Salary", m
 lines(lowess(dat$EFT, dat$Salary))
 ```
 
-![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png)
+![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-13-1.png)
 
 ``` r
 cor(dat$EFT, dat$Salary)
@@ -4722,7 +4719,7 @@ plot(players2$EFT, players2$Salary, xlab = "EFT", ylab = "Salary", main = "Playe
 lines(lowess(players2$EFT, players2$Salary))
 ```
 
-![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-14-1.png)
+![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-15-1.png)
 
 ``` r
 cor(players2$EFT, players2$Salary)
@@ -4730,7 +4727,7 @@ cor(players2$EFT, players2$Salary)
 
     ## [1] 0.5367224
 
-The correlation is lower for more established players.
+The correlation is lower for more established players. This means that EFT and Salary are not really related to each other. However, compared to the first plot, the lowess line of the second plot seems to be a little more steeper since it is less curvy.
 
 6. Comments and Reflfections
 ============================
