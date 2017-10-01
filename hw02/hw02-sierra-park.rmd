@@ -1,0 +1,169 @@
+---
+title: "hw02"
+author: "Sierra Park"
+date: "9/25/2017"
+output: github_document
+---
+
+
+#1 Create a Data Dictionary 
+refer to the dictionary file
+
+#2 Import the Data in R
+
+```{r}
+setwd('/Users/spark/Documents/UCBERKELEY/2017Fall/stat133/stat133-hws-fall17/hw02/data')
+classes <- c("character", "character", "factor", "character", "double", rep("integer",19))
+dat <- read.csv(file = "nba2017-player-statistics.csv", colClasses = classes)
+dat
+```
+
+```{r}
+str(dat)
+```
+
+
+```{r}
+setwd('/Users/spark/Documents/UCBERKELEY/2017Fall/stat133/stat133-hws-fall17/hw02/data')
+#install.packages("readr")
+#classes <- list(col_charcter(), col_character(), col_factor(), col_character(), col_double(), rep(col_integer(),19))
+library("readr")
+dat2 <- read_csv("nba2017-player-statistics.csv", col_types = cols(
+  Player= col_character(),
+  Team = col_character(),
+  Position = col_factor(c("C", "PF", "PG", "SF", "SG")),
+  Experience = col_character(),
+  Salary = col_double(),
+  Rank = col_integer(),
+  Age = col_integer(),
+  GP = col_integer(),
+  GS = col_integer(),
+  MIN = col_integer(),
+  FGM = col_integer(),
+  FGA= col_integer(),
+  Points3 = col_integer(),
+  Points3_atts= col_integer(),
+  Points2 = col_integer(),
+  Points2_atts = col_integer(),
+  FTM = col_integer(),
+  FTA = col_integer(),
+  OREB = col_integer(),
+  DREB = col_integer(),
+  AST = col_integer(),
+  STL = col_integer(),
+  BLK = col_integer(),
+  TO = col_integer()
+))
+
+
+
+#list(col_character(), col_character(), col_factor(), col_character(), col_double(), rep("col_integer()",19)))
+#coltypes(data) <- classes
+dat2
+```
+
+
+```{r}
+str(dat2)
+```
+
+
+#3. Right after Importing the Data
+```{r}
+dat$Experience[dat$Experience=="R"]<- "0" #convert R to 0
+dat$Experience <- as.integer(dat$Experience)
+dat
+```
+
+#4. Performance of Players 
+```{r}
+#PTS: total points => 3*Points3_atts + 2*Points2_atts + FTM
+#REB: total rebounds => ORB + DRB
+#AST: assists
+#STL: steals
+#BLK: blocks
+#Missed FG: missed field goals => FGA - FGM
+#Missed FT: missed free throws => FTA - FTM
+#TO: turnovers
+#GP: games played 
+dat$Missed_FG = dat$FGA - dat$FGM
+dat$Missed_FT = dat$FTA - dat$FTM
+dat$PTS = 3*dat$Points3 + 2*dat$Points2 + dat$FTM
+dat$REB = dat$OREB + dat$DREB
+dat$MPG = dat$MIN/ dat$GP
+
+
+dat$EFT = (dat$PTS + dat$REB + dat$AST + dat$STL + dat$BLK - dat$Missed_FG - dat$Missed_FT - dat$TO)/dat$GP
+dat
+```
+
+
+```{R}
+summary(dat$EFT)
+```
+
+```{r}
+#Display the player name, team, salary, and EFT of the top 10 players in decreasing order
+new <- dat[order(dat$EFT, decreasing = TRUE),]
+new <- new[1:10,]
+new[, c("Player", "Team", "Salary", "EFT")]
+
+```
+
+
+```{r}
+dat[dat$EFT<0,1] #Player with negavite EFT
+```
+
+
+```{r}
+corrs <- c(
+cor(dat$EFT, dat$PTS),
+cor(dat$EFT, dat$REB),
+cor(dat$EFT, dat$AST),
+cor(dat$EFT, dat$STL),
+cor(dat$EFT, dat$BLK),
+cor(dat$EFT, -dat$Missed_FG),
+cor(dat$EFT, -dat$Missed_FT),
+cor(dat$EFT, -dat$TO))
+corrs <- sort(corrs, decreasing= TRUE)
+```
+
+```{r}
+barplot(corrs, names.arg = c("PTS", "REB", "STL", "AST","BLK", "Missed_FT", "Missed_FG", "TO"), yaxp = c(-1, 1, 4), col = c(rep("gray",5), rep("red",3)), main = "Correlations between Player Stats and EFF")
+
+```
+
+
+#5 Efficiency and Salary
+```{r}
+plot(dat$EFT, dat$Salary,  col = "blue", xlab = "Efficiency", ylab = "Salary", main = "Scaterplot of Efficiency and Salary and Lowess lines")
+lines(lowess(dat$EFT, dat$Salary))
+```
+
+
+```{r}
+cor(dat$EFT, dat$Salary)
+```
+
+The two variables, EFT and Salary, are positively correlated with correlation coefficient of 0.655624.
+
+
+
+```{r}
+players2 <- dat[dat$MPG >= 20,]
+plot(players2$EFT, players2$Salary, xlab = "EFT", ylab = "Salary", main = "Players vs. Salary")
+lines(lowess(players2$EFT, players2$Salary))
+```
+
+```{r}
+cor(players2$EFT, players2$Salary)
+```
+
+The correlation is lower for more established players.
+
+
+#6. Comments and Reflfections
+
+The hardest part was to figure out read_csv using column types, and the easy part was indexing columns of the data frame. It took me 5 hours to complete this. 
+
