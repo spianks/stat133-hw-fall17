@@ -89,7 +89,7 @@ dat
 summary(dat$EFT)
 ```
 ```{r}
-hist(dat$EFT, col = "gray", xlab = "EFF", main = "Histogram of Efficiency (EFF)")
+hist(dat$EFT, col = "gray", xlab = "EFT", main = "Histogram of Efficiency (EFT)")
 ```
 
 
@@ -152,11 +152,12 @@ lines(lowess(players2$EFT, players2$Salary))
 cor(players2$EFT, players2$Salary)
 ```
 
-The correlation is lower for more established players. This means that EFT and Salary are not really related to each other.
-However, compared to the first plot, the lowess line of the second plot seems to be a little more steeper since it is less curvy. 
+The correlation is lower for more established players. This means that EFT and Salary are not really related to each other. This might be due to the fact that the rising players are seeking to be paid more through new support from outside sources. 
+
+Compared to the first plot, the lowess line of the second plot seems to be a little more steeper since it is less curvy. 
 
 
-#6. Comments and Reflfections
+#6. Comments and Reflections
 
 The hardest part was to figure out read_csv using column types, and the easy part was indexing columns of the data frame. It took me 5 hours to complete this. 
-
+It was surprising and unexpected to see that the correlation was lower for more established players. 

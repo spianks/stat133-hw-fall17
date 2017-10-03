@@ -4642,7 +4642,7 @@ summary(dat$EFT)
     ##  -0.600   5.452   9.090  10.137  13.247  33.840
 
 ``` r
-hist(dat$EFT, col = "gray", xlab = "EFF", main = "Histogram of Efficiency (EFF)")
+hist(dat$EFT, col = "gray", xlab = "EFT", main = "Histogram of Efficiency (EFT)")
 ```
 
 ![](hw02-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png)
@@ -4727,9 +4727,11 @@ cor(players2$EFT, players2$Salary)
 
     ## [1] 0.5367224
 
-The correlation is lower for more established players. This means that EFT and Salary are not really related to each other. However, compared to the first plot, the lowess line of the second plot seems to be a little more steeper since it is less curvy.
+The correlation is lower for more established players. This means that EFT and Salary are not really related to each other. This might be due to the fact that the rising players are seeking to be paid more through new support from outside sources.
 
-6. Comments and Reflfections
-============================
+Compared to the first plot, the lowess line of the second plot seems to be a little more steeper since it is less curvy.
 
-The hardest part was to figure out read\_csv using column types, and the easy part was indexing columns of the data frame. It took me 5 hours to complete this.
+6. Comments and Reflections
+===========================
+
+The hardest part was to figure out read\_csv using column types, and the easy part was indexing columns of the data frame. It took me 5 hours to complete this. It was surprising and unexpected to see that the correlation was lower for more established players.
