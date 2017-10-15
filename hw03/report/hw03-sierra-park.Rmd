@@ -1,0 +1,130 @@
+---
+title: "hw03"
+author: "Sierra Park"
+date: "10/5/2017"
+output: github_document
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+
+
+
+
+# Ranking of Teams 
+
+```{r}
+getwd()
+teams <- read.csv("../data/nba2017-teams.csv", stringsAsFactors = FALSE)
+teams
+```
+## Basic Rankings 
+
+```{r}
+descsalary <-  teams %>% arrange(desc(salary))
+descsalary
+```
+
+```{r}
+ggplot(descsalary, aes(x = reorder(team, salary), y = salary))+ geom_bar(stat = 'identity') + coord_flip() + labs(y = "Salary (in Millions)", x = "Team") + ggtitle("NBA Teams ranked by Total Salary") + theme(plot.title = element_text(hjust = 0.5)) + geom_hline(yintercept = mean(descsalary$salary), col = "red")
+```
+
+
+
+```{r}
+ggplot(teams, aes(x = reorder(team, points), y = points))+ geom_bar(stat = 'identity') + coord_flip() + labs(y = "Total Points", x = "Team") + ggtitle("NBA Teams ranked by Total Points") + theme(plot.title = element_text(hjust = 0.5)) + geom_hline(yintercept = mean(descsalary$points), col = "red")
+```
+
+```{r}
+
+#EFFICIENCY GRAPH IS WRONG BC EFFICIENCY COLUMN IS WRONG 
+ggplot(teams, aes(x = reorder(team, efficiency), y = efficiency))+ geom_bar(stat = 'identity') + coord_flip() + labs(y = "Total Points", x = "Team") + ggtitle("NBA Teams ranked by Total Efficiency") + theme(plot.title = element_text(hjust = 0.5)) + geom_hline(yintercept = mean(descsalary$efficiency), col = "red")
+```
+
+
+According to the rank by total salary, CLE was number one.
+According to the rank by total points, GSW was number one.
+According to the rank by total efficiency, CLE was number one. 
+
+
+
+# Principal Components Analysis (PCA)
+
+```{r}
+str(teams[, c(-1, -2, -3, -7, -15)])
+```
+
+```{r}
+teams[, c(-1, -2, -3, -4, -8, -16)]
+```
+
+```{r}
+pca <- prcomp(teams[, c(-1, -2, -3, -4, -8, -16)], scale. = TRUE)
+```
+
+
+
+
+```{r}
+names(pca)
+```
+
+
+```{r}
+pca$x
+```
+
+
+
+```{r}
+data.frame(eigenvalue = round(pca$sdev^2, 4), proportion = round(pca$sdev^2 / sum(pca$sdev^2), 4), cumprop = cumsum(round(pca$sdev^2 / sum(pca$sdev^2), 4)))
+```
+
+
+```{r}
+scores =as.data.frame(pca$x)
+scores$PC1
+
+scores
+teams$PC1 <-  scores$PC1
+teams$PC2 = scores$PC2
+teams
+```
+
+
+```{r}
+ggplot(data = teams, aes(x = teams$PC1, y = teams$PC2)) + geom_text(aes(label = teams$team)) + ggtitle(label = "PCA plot (PC1 and PC2)") + labs(x ="PC1", y = "PC2")
+```
+
+
+
+
+
+
+## Index based on PC1
+```{r}
+s1 <- (teams$PC1 - min(teams$PC1)) / (max(teams$PC1) - min(teams$PC1)) * 100
+teams$scaledPC <- s1
+```
+
+
+
+```{r}
+ggplot(teams, aes(x = reorder(team, scaledPC), y = scaledPC))+ geom_bar(stat = 'identity') + coord_flip() + labs(y = "First PC (scaled from 0 to 100)", x = "Team") + ggtitle("NBA Teams ranked by scaled PC1") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+DESCRIPTION:
+Ranking by the scaled PC1, GSW seems to rank first by a significant difference. 
+
+
+# Comments 
+
+Doing PCA was difficult 
+
+
+
+
+
