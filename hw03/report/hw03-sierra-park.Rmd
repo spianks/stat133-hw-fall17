@@ -92,11 +92,21 @@ scores
 teams$PC1 <-  scores$PC1
 teams$PC2 = scores$PC2
 teams
+
+
+
 ```
 
 
 ```{r}
-ggplot(data = teams, aes(x = teams$PC1, y = teams$PC2)) + geom_text(aes(label = teams$team)) + ggtitle(label = "PCA plot (PC1 and PC2)") + labs(x ="PC1", y = "PC2")
+ggplot(data = scores, aes(x = PC1, y = -PC2)) + geom_hline(yintercept = 0, color = "gray") + geom_vline(xintercept = 0, color = "gray") + geom_text(label = teams$team) + ggtitle("PCA plot (PC1 and PC2)") + scale_x_reverse() + scale_y_reverse() + labs(x ="PC1", y = "PC2")
+```
+
+
+
+
+```{r, fig.width= 8, fig.height=6}
+ggplot(data = teams, aes(x = -PC1, y = PC2)) + geom_text(aes(label = team)) + ggtitle(label = "PCA plot (PC1 and PC2)") + labs(x ="PC1", y = "PC2")
 ```
 
 

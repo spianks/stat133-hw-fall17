@@ -685,10 +685,16 @@ teams
     ## 30   143.0117 -0.01584476  0.39647434  51.680440
 
 ``` r
-ggplot(data = teams, aes(x = teams$PC1, y = teams$PC2)) + geom_text(aes(label = teams$team)) + ggtitle(label = "PCA plot (PC1 and PC2)") + labs(x ="PC1", y = "PC2")
+ggplot(data = scores, aes(x = PC1, y = -PC2)) + geom_hline(yintercept = 0, color = "gray") + geom_vline(xintercept = 0, color = "gray") + geom_text(label = teams$team) + ggtitle("PCA plot (PC1 and PC2)") + scale_x_reverse() + scale_y_reverse() + labs(x ="PC1", y = "PC2")
 ```
 
 ![](hw03-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-14-1.png)
+
+``` r
+ggplot(data = teams, aes(x = -PC1, y = PC2)) + geom_text(aes(label = team)) + ggtitle(label = "PCA plot (PC1 and PC2)") + labs(x ="PC1", y = "PC2")
+```
+
+![](hw03-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-15-1.png)
 
 Index based on PC1
 ------------------
@@ -702,7 +708,7 @@ teams$scaledPC <- s1
 ggplot(teams, aes(x = reorder(team, scaledPC), y = scaledPC))+ geom_bar(stat = 'identity') + coord_flip() + labs(y = "First PC (scaled from 0 to 100)", x = "Team") + ggtitle("NBA Teams ranked by scaled PC1") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](hw03-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-16-1.png)
+![](hw03-sierra-park_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-17-1.png)
 
 DESCRIPTION: Ranking by the scaled PC1, GSW seems to rank first by a significant difference.
 
