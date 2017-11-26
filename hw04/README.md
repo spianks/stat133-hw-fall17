@@ -9,6 +9,25 @@ Repository for HW assignments of Stat 133 (Fall 2017)
 
 -----
 
+library(shiny)
+runGitHub("stat133-hws-fall17", "spianks", subdir"hw04/app")
+
+
+
+
+## Comments:
+This was my first time writing unit tests.
+Logic of testthat tests: not confusing(0/10)
+This was my first time working with ggvis.
+0/10
+his was my first time working with shinyapp.
+9/10
+ggplot is easier than others.
+Friends and office hours
+Took a long time to complete this hw-- more than 2 weeks
+Time consuming part was shiny app.
+
+
 ## Get your own repository
 
 Get your own copy (clone) of this repository. This means that you will have

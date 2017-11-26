@@ -1,5 +1,5 @@
 ---
-title: "Exploring Lowess Line in Depth"
+title: "Post 2: Random Number Generator"
 author: "Sierra Park"
 date: "10/20/2017"
 output: html_document
