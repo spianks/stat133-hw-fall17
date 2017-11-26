@@ -1,7 +1,7 @@
 ---
 title: "Post 2: Random Number Generator"
 author: "Sierra Park"
-date: "10/20/2017"
+date: "11/25/2017"
 output: html_document
 ---
 ```{r}
@@ -13,131 +13,156 @@ library(ggplot2)
 
 ## Introduction 
 
-#### "Include a lowess smooth line in the plot." 
+#### Dataset: Student Admissions at UC Berkeley  
 
-In the beginning of the course, one of the tasks in Homework 1 was to create a LOWESS line along with a regression line through a set of points. I didn't know what lowess smoothing was for, so I just googled the code for lowess and used it directly without understanding how it worked. For this post, I would like to go back to that portion of the assignment and relearn what lowess smooth curve is and understand how to use R function to graph it. Let us explore this area more in depth.
+I will explore XX using the UC Berkeley Student Admissions built-in dataset in R.
+This is an aggregate data on applicants to UC Berekely graduate school for the six largest departments in 1973  classied by admission and sex.
+I will perform hypothesis testing to see if the admission rates for males and females are the same across the six departments. 
 
-## What is Lowess? 
+## What is Hypothesis Testing? 
 
-To start off with the definition, LOWESS stands for Locally Weighted Scatterplot Smoothing, and it is sometimes called LOESS, which stands for Locally Weighted Smoothing. 
+The main purpose of hypothesis testing is to test if the data from an experiment or observation supports a hypothesis.
 
-A simple "lowess/loess" curve is constructed using the "lowess()" function that finds a fitted value for each data point, connecting with lines. 
-To find the fitted value for one data point, call it x, we find the data nearest to x and find the weighted mean. 
-If the desired distance around x is small, we will not be able to catch sufficient data points to achieve high accuracy. Hence, we are left with a large variance.
-On the other hand, if the desired diefference around x is too large, then the regression may be oversmoothed, resulting in large bias. 
+This process starts with forming a null hypothesis that assumes that the chances of all events are equal and that all differences are merely due to chance. On the other hand, an alternative hypothesis states that the differences are real--there is an underlying phenomenom behind the differences we see in the results. 
+
+After forming the hypotheses, we state the alpha level in which you will use as a threshold to determine whether we should accept or fail to accept the null hypothesis. We generally choose alpha to be 5%. 
+
+The metric that we use to determine whether the null hypothesis is true is the p-value, so-called the observed significance level. 
+P-value determines how "likely" or "unlikely" we observe a more extreme test statistic in the direction of the alternative hypothesis than the one observed. 
+If the p-value is small (let's say, less than or equal to alpha), then it is "unlikely"; if the p-value is large (le'ts say, more than alpha), then it is "likely."
+In other words, p-value is the chance, under the null hypothesis, that the test statistic is equal to the value that was observed in the data or is even further in the direction of the alternative. 
+If a p-value is small, it means that the tail beyond it is small, so the observed statistic is  away from what the null predicts, implying that the dat asupport the alternative hypothesis better than the null hypothesis.
+
+If the p-value is less than 5%, then the result is statistically significant; if the p-value is even smaller--less than 1%--then the result is highly statistically significant, and we reject the null.
+
+For this post, we will use two-sided hypotheesis, just to denote that there is a difference between the admission rate of males and females. 
 
 
-In fact, the tradeoff between variance and bias is interesting to observe. Depending on the degree of the polynomial selected to smooth the data, the two have an inverse relationship. For example, a higher degree polynomial can predict more accurately, which lowers bias, yet since the scope of observed points were small, there may be greater variance.
-The typical function used is the quadratic functions since any functions of higher degree than that do not provide better results. 
 
  
 
-## Use of Lowess Smoothing
-So when and why do we use lowess you may ask? 
-Lowess is a widely used tool in regression analysis to create a smooth line through a timeplot or a scatterplot to see the relationship between the variables and define a pattern or a trend. 
-This method is particularly helpful when there are noisy data values or sparse data points that weaken the relationships between variables and interfere the line of the best fit. 
-Hence, lowess smoothing is useful in linear regression where the least squares line is not a good representative of the data points. 
-
-You can say that the advantage of using a lowess function is that there is no need to specify a global function of any form to fit a model to the data. All we are trying to do is to fit segments of the data. However, one disadvantage is that computing lowess line is very complicated. 
-
-A real life example of the lowess line is to examine elections and voting behavior. 
-
-
-## Difference Between Lowess and Regression 
-Then what is the difference between a lowess and regression line? 
-In simple terms, a linear model fits a straight line through a set of points (the best line of fit) whileas a lowess line fits a more complicated model through a set of points baed on weighted regression. 
-
-
-
-## Example of Lowess 
-In this part, I am using an example from a website from Princeton University. Our goal is to observe the data from the Colombia WFS Household Survey 1975-1976.
-```{r}
-#Read data and name it "colombia"
-colombia <- read.table("http://data.princeton.edu/eco572/datasets/cohhpop.dat", col.names=c("age","pop"), header=FALSE)
-head(colombia)
-```
-
-To see the the general trend in age vs. population, we will create ggplot.
-```{r}
-#plotting the table to get an idea of what the data look like
-ggplot(colombia, aes(age, pop)) + geom_line() + ggtitle("Colombia WFS 1957-1976")
-```
-
-From the ggplot, we can see that there is a general trend: as the age increases, the population of that age decreases.
-However, note that the graph is not in the form of a smooth line despite of the obvious trend that we can identify. 
-
-
-In order to smooth this curve, the best method is to use weighted means, or we could even use the k-nearest neighbors for each point to fit a regression line to the points in the neighborhood and predict a smoother value for the index of observation. The reason why we look at the points closest to x is that the points near x are more likely to be related to each other in a simple way than points that are far apart. 
-However, without having to mannually implement this method, we can use lowess smoother that will directly plot the smooth line. 
-
-The R base lowess function is "lowess()," and the parameter "degree" controls the degree of the polynomial, with default as 2 for quadratic. 
-Number of iterations is controlled by the parameter "iter."
-
-The user an specify the "bandwidth" or "smoothing parameter" that determines how much of the data is used to fit each local polynomial.
-The smoothing parameter, call it q, is: 
+## Forming Hypothesis
+In our case, null hypothesis is:
 $$
-\frac{(d+1)}{n} < q < 1
+H = \textrm{There is no difference in the admission rate for males and females} 
 $$
-where d = degree of the local polynomial.
+and alternative hypothesis is:
+$$
+H_\alpha  = \textrm{There is a difference in the admission rate for males and females; the difference is due to chance.} 
+$$
 
-In fact, q controls the flexibility of the lowess regression function.
-Large q-value means that the function is smooth and is less responsive to fluctuations in the data, while small q-value means that the regression function will conform to the data.
-
-
-For more information on how to access the "lowess()" function, use "?lowess."
-In ggplot2, however, the equivalent of lowess() is "geom_smooth()."
-
-
-
-Now, graphing the lowess line using ggplot, we see a smoother curve that follows the general trend of the line graph.
+## Observe the Data
+Let's take a look at the UC Berkeley Admissions data.
 ```{r}
-#Smooth the geom_line(), which is a line graph
-ggplot(colombia, aes(age, pop)) + geom_line() + geom_smooth(span=0.25, se=FALSE) + ggtitle("Lowess Smoother")
+UCBAdmissions
 ```
 
-Notice that the argument "span" inside geom_smooth() is the smoothing parameter. 
-Right now, it is at 0.25, but what happens if we increase it to 0.9?
+We see that there are 6 departments and each of them have the number of males and females admitted and rejected students.
+Hence, we will calculate the percentages of admission and rejected rate for males and females in eaach department using a for loop.
 
-This is the new graph below:
+
+
 ```{r}
-ggplot(colombia, aes(age, pop)) + geom_line() + geom_smooth(span=0.9, se=FALSE) + ggtitle("Lowess Smoother")
-
+percentadmitmale <-  rep(0, 6) #Create an empty vector for percent admitted males
+percentadmitfemale <-  rep(0,6) #Create an empty vector percent admitted females 
+numbermale <- rep(0,6)
+numberfemale <- rep(0,6)
+for (i in 1:6){ #Calculate the admitted percentage for males and females for each department
+  dep <- UCBAdmissions[,,LETTERS[i]]
+  numbermale[i] <- sum(dep[1,1], dep[1,2])
+  numberfemale[i] <- sum(dep[2,1], dep[2,2])
+  percentadmitmale[i] <- dep[1,1]/(dep[1,1] + dep[1,2])
+  percentadmitfemale[i] <- dep[2,1]/(dep[2,1] + dep[2,2])
+}
 ```
 
 
-The line looks too smooth, like a straight line if the smoothing parameter had reached 1. 
-
-
-We looked at the lowess line vs a line plot, but let's observe how the graph looks like if we graphed lowess line vs scatterplot: 
-
+We have two vectors, *percentadmitmale* and *percentadmitfemale*, that show the percent admission for males and females, respectively.
 ```{r}
-#Smooth the geom_point(), which is a scatterplot
-ggplot(colombia, aes(age, pop)) + geom_point() + geom_smooth(span=0.25, se=FALSE) + ggtitle("Lowess Smoother")
+percentadmitfemale
+percentadmitmale
 ```
 
-It seems like the lowess line follows the scatterplot better than the line plot just visually. 
+Note that we cannot eye-ball whether the admission rate for both sexes is equal or not. Hence we will perform a hypothesis test with the hypothesis stated above. 
 
 
-Nevertheless, with using regression, we get a straight line with a negative slope that does not seem to fit the data too well: 
+### Performing the Hypothesis Test
+Let our observed statistic to be the difference between the admitted percentages of females and males.
 ```{r}
-#scatterplot of the dataset with linear regression line
-plot(colombia$age, colombia$pop, xlab = "age", ylab = "pop")
-abline(lm(colombia$pop~colombia$age))
+observed_statistic = abs(percentadmitfemale - percentadmitmale)
+observed_statistic
 ```
 
-Since a straight line is not flexible in accomodating the varying points of the scatterplot, this line of the best fit is not suitable, and we conclude that the lowess line is a better representation of the data. 
+```{r}
+data.frame(observed_statistic)
+ggplot(data.frame(observed_statistic)) + geom_dotplot(aes(observed_statistic))
+```
 
+
+
+We will perform z-test for difference in proportions.
+* Pooled sample proportion:
+Since the null hypothesis states that admission rate of females is the same as the admissio nrate of males, we use a pooled sample proportion (p) to compute the standard error of the sampling distribution.
+```{r}
+p <- (percentadmitfemale *numberfemale + percentadmitmale * numbermale) / (numberfemale + numbermale)
+p
+```
+
+* Standard error:
+Compute the standard error (SE) of the sampling distribution difference between twop roportions:
+```{r}
+SE <- sqrt(p*(1-p)*((1/numbermale) + (1/numberfemale)))
+SE
+```
+
+* Test statistic:
+The test statistic is a z-score defined by:
+$$
+\textrm{z = (percentadmitfemale - percentadmitmale)/SE}
+$$
+
+
+Hence, 
+```{r}
+z <- (percentadmitfemale - percentadmitmale)/SE
+z
+```
+
+
+### Translate Z-score to P-value
+Since having a z-score less than -1.96 or greater than 1.96 means more than two standard deviation away, the corresponding p-value would be less than 0.05 on either side of the bell curve. 
+Hence, looking at our z vector, only the first department has an absolute value of z-value greater than 1.96. 
+Therefore, the admission rate between the males and females were equal in all departments besides department A. 
+
+
+
+
+
+### DIY
+500 random people Male and Female
+```{r}
+draw <- sample(c("FEMALE", "MALE"), 500, replace = TRUE)
+```
+
+
+```{r}
+f <- sum(draw=="FEMALE")
+m <- sum(draw=="MALE")
+```
+
+```{r}
+
+```
+sum()
 
 ### Conclusion 
-In the end, the message of this post is to understand that sometimes, a better method of seeing the relationship between variables is to use a lowess line that uses a weighted average instead of using a simple linear model. 
-
-
+In the end, the message of this post is to understand that sometimes, a better method of seeing the relationship between variables is to use a lowess line that uses a weighted average instead 
 
 ### Sources:
-1. http://www.statisticshowto.com/lowess-smoothing/
-2. http://data.princeton.edu/eco572/smoothing1.html
-3. http://geog.uoregon.edu/bartlein/old_courses/geog414f03/lectures/lec05.htm 
-4. https://www.statsdirect.com/help/nonparametric_methods/loess.htm 
-5. https://www.statmethods.net/advgraphs/axes.html 
-6. http://polisci.msu.edu/jacoby/icpsr/regress3/lectures/week4/15.Loess.pdf
-7. http://www.itl.nist.gov/div898/handbook/pmd/section1/pmd144.htm
+1. http://www.statisticshowto.com/probability-and-statistics/hypothesis-testing/
+2. https://onlinecourses.science.psu.edu/statprogram/node/138
+3. https://www.inferentialthinking.com/chapters/10/2/terminology-of-testing.html
+4. http://stattrek.com/hypothesis-test/difference-in-proportions.aspx
+5. http://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/what-is-a-z-score-what-is-a-p-value.htm
+6. 
+7. 
