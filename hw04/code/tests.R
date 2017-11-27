@@ -115,9 +115,9 @@ test_that("count_missing is correct",{
 
 context("summary_stats")
 test_that("summary_stats is correct",{
-  expect_equal(length(summary_stats(c(1,NA))), c(10))
+  expect_equal(length(summary_stats(c(1,NA))), c(11))
   expect_equal(typeof(summary_stats(c(1,2))[5]), c("list"))
-  expect_equal(names(summary_stats(c(1,3,5,NA,9))), c("minimum", "percent10", "quartile1", "median", "quartile3",
+  expect_equal(names(summary_stats(c(1,3,5,NA,9))), c("minimum", "percent10", "quartile1",  "mean", "median", "quartile3",
                                                "percent90", "maximum", "range", "stdev", "missing"))
   expect_equal(summary_stats(c(NA,4,6))[[1]], c(4))
 })

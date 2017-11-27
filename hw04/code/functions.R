@@ -128,7 +128,7 @@ count_missing <- #takes a numeric vector and calculates the number of missing va
 summary_stats <- #takes a numeric vector and returns a list of summary statistics
   function(v){
   list(minimum = get_minimum(v), percent10 = get_percentile10(v), quartile1 = get_quartile1(v),
-       median = get_median(v), quartile3 = get_quartile3(v), percent90 = get_percentile90(v),
+       mean = get_average(v), median = get_median(v), quartile3 = get_quartile3(v), percent90 = get_percentile90(v),
        maximum = get_maximum(v), range = get_range(v), stdev = get_stdev(v), missing = count_missing(v)
        )
 }
