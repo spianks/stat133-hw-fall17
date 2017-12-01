@@ -1,5 +1,5 @@
 ---
-title: "Post 2: Random Number Generator"
+title: "Post 2: Z-testing"
 author: "Sierra Park"
 date: "11/25/2017"
 output: html_document
@@ -15,9 +15,9 @@ library(ggplot2)
 
 #### Dataset: Student Admissions at UC Berkeley  
 
-I will explore XX using the UC Berkeley Student Admissions built-in dataset in R.
-This is an aggregate data on applicants to UC Berekely graduate school for the six largest departments in 1973  classied by admission and sex.
-I will perform hypothesis testing to see if the admission rates for males and females are the same across the six departments. 
+I will explore hypothesis testing using the UC Berkeley Student Admissions built-in dataset in R.
+This is an aggregate data on applicants to UC Berekely graduate school for the six largest departments in 1973 classified by admission and sex.
+I will perform a z-test to see if the admission rates for males and females are the same across the six departments. 
 
 ## What is Hypothesis Testing? 
 
@@ -33,7 +33,7 @@ If the p-value is small (let's say, less than or equal to alpha), then it is "un
 In other words, p-value is the chance, under the null hypothesis, that the test statistic is equal to the value that was observed in the data or is even further in the direction of the alternative. 
 If a p-value is small, it means that the tail beyond it is small, so the observed statistic is  away from what the null predicts, implying that the dat asupport the alternative hypothesis better than the null hypothesis.
 
-If the p-value is less than 5%, then the result is statistically significant; if the p-value is even smaller--less than 1%--then the result is highly statistically significant, and we reject the null.
+If the p-value is less than 5%, then the result is statistically significant; if the p-value is even smaller--less than 1%--then the result is highly statistically significant, and we reject the null in both cases since the null hypothesis can no longer be true.
 
 For this post, we will use two-sided hypotheesis, just to denote that there is a difference between the admission rate of males and females. 
 
@@ -58,21 +58,71 @@ UCBAdmissions
 ```
 
 We see that there are 6 departments and each of them have the number of males and females admitted and rejected students.
-Hence, we will calculate the percentages of admission and rejected rate for males and females in eaach department using a for loop.
+Hence, we will calculate the percentages of admission rate for males and females in eaach department using a for loop.
+
+However, before doing so, we will graph the statistics to get a sense of what they look like.
+
+## Analysis of the Data
+
+For Department A, there were more admitted students than rejected students, and more admitted and rejected males than females. This seems plausible since there were a lot more male students who have applied than female students.
+```{r}
+ggplot(data.frame(UCBAdmissions[,,LETTERS[1]]), aes(Admit , Freq, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + ggtitle("Department A")
+```
+
+It seems as if the same pattern as Department A occurs to Department B as well. 
+For Department B, there were also more admitted students than rejected students, and more admitted and rejected males than females. However, the total number of applicants in Department B is less than Department A. 
+```{r}
+ggplot(data.frame(UCBAdmissions[,,LETTERS[2]]), aes(Admit, Freq, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + ggtitle("Department B")
+```
+
+
+The trend changes, however, for Department C. 
+For Department C, there were more rejected students than admitted students, and more admitted and rejected females than males.
+```{r}
+ggplot(data.frame(UCBAdmissions[,,LETTERS[3]]), aes(Admit, Freq, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + ggtitle("Department C")
+```
+
+
+For Department D, there were more rejected students than admitted students, and more admitted and rejected males than females. 
+```{r}
+ggplot(data.frame(UCBAdmissions[,,LETTERS[4]]), aes(Admit, Freq, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + ggtitle("Department D")
+```
+
+For Department E, there were more rejected students than admitted students in general, and more admitted and rejected females than males. 
+There is the biggest gap between 
+```{r}
+ggplot(data.frame(UCBAdmissions[,,LETTERS[5]]), aes(Admit, Freq, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + ggtitle("Department E")
+```
+
+
+For Department F, there were more rejected students than admitted students.
+There are more admitted females than admitted males, but more rejected males than rejected females. The gap between admitted vs. rejected in both genders is the biggest in this department.
+```{r}
+ggplot(data.frame(UCBAdmissions[,,LETTERS[6]]), aes(Admit, Freq, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + ggtitle("Department F")
+```
 
 
 
+We have examined the data for each department, and we can conclude that there is a recurring pattern among some departments.
+Specifically, we can divide them into two categories: one where there were more admitted than rejected students (Department A and B), and the other with more rejected than admitted students (Department C, D, E, and F). 
+We note that Department A had the highest number of applicants. 
+
+
+### Performing the Hypothesis Test
+
+Now, let's perform the z-test for percent admitted males and females. 
+I have created a for loop to calculate the admitted percentages for males and females of each department. 
 ```{r}
 percentadmitmale <-  rep(0, 6) #Create an empty vector for percent admitted males
 percentadmitfemale <-  rep(0,6) #Create an empty vector percent admitted females 
 numbermale <- rep(0,6)
 numberfemale <- rep(0,6)
-for (i in 1:6){ #Calculate the admitted percentage for males and females for each department
+for (i in 1:6){ #Calculate the admitted percentage for males and females of each department
   dep <- UCBAdmissions[,,LETTERS[i]]
-  numbermale[i] <- sum(dep[1,1], dep[1,2])
-  numberfemale[i] <- sum(dep[2,1], dep[2,2])
-  percentadmitmale[i] <- dep[1,1]/(dep[1,1] + dep[1,2])
-  percentadmitfemale[i] <- dep[2,1]/(dep[2,1] + dep[2,2])
+  numbermale[i] <- sum(dep[1,1], dep[2,1])
+  numberfemale[i] <- sum(dep[2,2], dep[1,2])
+  percentadmitmale[i] <- dep[1,1]/(dep[1,1] + dep[2,1])
+  percentadmitfemale[i] <- dep[2,1]/(dep[2,2] + dep[1,2])
 }
 ```
 
@@ -83,33 +133,40 @@ percentadmitfemale
 percentadmitmale
 ```
 
-Note that we cannot eye-ball whether the admission rate for both sexes is equal or not. Hence we will perform a hypothesis test with the hypothesis stated above. 
+Examining the two vectors, it seems as if all Departments besides B had some difference between the percent admitted females and males. 
 
 
-### Performing the Hypothesis Test
-Let our observed statistic to be the difference between the admitted percentages of females and males.
+
+NOTE: Hypotheses are stated above. 
+
+
+Let our observed statistic be the difference between the admitted percentages of females and males.
 ```{r}
-observed_statistic = abs(percentadmitfemale - percentadmitmale)
+observed_statistic = (percentadmitfemale - percentadmitmale)
 observed_statistic
 ```
 
+In order to see the distribution/spread of the observed statistic, I have used a dot plot to represent the data.
 ```{r}
-data.frame(observed_statistic)
 ggplot(data.frame(observed_statistic)) + geom_dotplot(aes(observed_statistic))
 ```
 
+All of the statistic is above 0, which means that the percent admitted males is greater than that of females.
 
 
-We will perform z-test for difference in proportions.
+### Now We will perform z-test for difference in proportions.
+
+There are a few things that we need to calculate:
+
 * Pooled sample proportion:
-Since the null hypothesis states that admission rate of females is the same as the admissio nrate of males, we use a pooled sample proportion (p) to compute the standard error of the sampling distribution.
+Since the null hypothesis states that admission rate of females is the same as the admission rate of males, we use a pooled sample proportion (p) to compute the standard error of the sampling distribution.
 ```{r}
 p <- (percentadmitfemale *numberfemale + percentadmitmale * numbermale) / (numberfemale + numbermale)
 p
 ```
 
 * Standard error:
-Compute the standard error (SE) of the sampling distribution difference between twop roportions:
+Compute the standard error (SE) of the sampling distribution difference between two proportions:
 ```{r}
 SE <- sqrt(p*(1-p)*((1/numbermale) + (1/numberfemale)))
 SE
@@ -122,41 +179,24 @@ $$
 $$
 
 
-Hence, 
+Hence, in our case, we define z to be: 
 ```{r}
 z <- (percentadmitfemale - percentadmitmale)/SE
 z
 ```
 
+Now that we have a z-score that we would like, we can use that to compute the p-value. This is done in the next section.
+
 
 ### Translate Z-score to P-value
 Since having a z-score less than -1.96 or greater than 1.96 means more than two standard deviation away, the corresponding p-value would be less than 0.05 on either side of the bell curve. 
-Hence, looking at our z vector, only the first department has an absolute value of z-value greater than 1.96. 
-Therefore, the admission rate between the males and females were equal in all departments besides department A. 
+Hence, looking at our z vector, Department A, C, and D have absolute value of z-value greater than 1.96. 
 
+Therefore, we conclude that the admission rate between the males and females were insignificant in all departments except Department A, C, and D. 
 
-
-
-
-### DIY
-500 random people Male and Female
-```{r}
-draw <- sample(c("FEMALE", "MALE"), 500, replace = TRUE)
-```
-
-
-```{r}
-f <- sum(draw=="FEMALE")
-m <- sum(draw=="MALE")
-```
-
-```{r}
-
-```
-sum()
 
 ### Conclusion 
-In the end, the message of this post is to understand that sometimes, a better method of seeing the relationship between variables is to use a lowess line that uses a weighted average instead 
+In this post, I ued a built-in dataset of UC Berkeley Admissions to analyze the admission rate between males and femals across 6 different departments. Hypothesizing that the admission rate is equal for both genders, I conducted a z-test, and found out that the p-value for three departments were significant: A, C, and D. This means that in those three departments, there was a noticeable difference in the admission rates between the two genders. This conclusion is supported by observing the gender-grouped barplots and noting the difference of the proportions between the genders. 
 
 ### Sources:
 1. http://www.statisticshowto.com/probability-and-statistics/hypothesis-testing/
@@ -164,5 +204,6 @@ In the end, the message of this post is to understand that sometimes, a better m
 3. https://www.inferentialthinking.com/chapters/10/2/terminology-of-testing.html
 4. http://stattrek.com/hypothesis-test/difference-in-proportions.aspx
 5. http://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/what-is-a-z-score-what-is-a-p-value.htm
-6. 
-7. 
+6. http://ggplot2.tidyverse.org/reference/labs.html 
+7. http://ggplot2.tidyverse.org/reference/geom_bar.html 
+8. https://stackoverflow.com/questions/17721126/simplest-way-to-do-grouped-barplot

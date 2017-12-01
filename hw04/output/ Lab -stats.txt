@@ -1,6 +1,7 @@
 minimum  : 0.0000
 percent10: 80.0000
 quartile1: 100.0000
+mean     : 93.5329
 median   : 100.0000
 quartile3: 100.0000
 percent90: 100.0000
